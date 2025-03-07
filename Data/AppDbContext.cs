@@ -10,7 +10,7 @@ using MovieTicketBooking.Models;
 
 namespace MovieTicketBooking.Data
 {
-    public class AppDbContext : IdentityDbContext<User>
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -19,13 +19,49 @@ namespace MovieTicketBooking.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            // Định nghĩa mối quan hệ 1 - 1 seat và booking
+            builder.Entity<Seat>()
+            .HasOne(s => s.Booking)
+            .WithOne(b => b.Seat)
+            .HasForeignKey<Booking>(b => b.SeatId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            // Thêm dữ liệu mặc định cho vai trò
-            builder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
-                new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
-            );
+            // Mối quan hệ 1 - n giữa User và Booking
+            builder.Entity<Booking>()
+            .HasOne(b => b.User)
+            .WithMany(u => u.Bookings)
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            // Mối quan hệ 1 - n giữa Movie và Showtime
+            builder.Entity<Showtime>()
+            .HasOne(s => s.Movie)
+            .WithMany(m => m.Showtimes)
+            .HasForeignKey(s => s.MovieId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            // Mối quan hệ 1 - n giữa Theater và Showtime
+            builder.Entity<Showtime>()
+            .HasOne(s => s.Theater)
+            .WithMany(t => t.Showtimes)
+            .HasForeignKey(s => s.TheaterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            // Mối quan hệ 1 - n giữa Showtime và Seat
+            builder.Entity<Seat>()
+            .HasOne(seat => seat.Showtime)
+            .WithMany(showtime => showtime.Seats)
+            .HasForeignKey(seat => seat.ShowtimeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ 1 - n giữa Showtime và Booking
+            builder.Entity<Booking>()
+            .HasOne(b => b.Showtime)
+            .WithMany(s => s.Bookings)
+            .HasForeignKey(b => b.ShowtimeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            base.OnModelCreating(builder);
         }
 
         public DbSet<Movie> Movies { get; set; }
@@ -33,5 +69,7 @@ namespace MovieTicketBooking.Data
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<User> Users { get; set; }
+
     }
 }

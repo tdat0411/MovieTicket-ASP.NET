@@ -8,6 +8,7 @@ namespace MovieTicketBooking.Models
 {
     public class Movie
     {
+        [Key]
         public int Id { get; set; }
         [Required, MaxLength(255)]
         public string Title { get; set; }

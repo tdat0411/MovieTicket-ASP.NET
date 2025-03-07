@@ -9,6 +9,7 @@ namespace MovieTicketBooking.Models
 {
     public class Showtime
     {
+        [Key]
         public int Id { get; set; }
         [Required]
         public int MovieId { get; set; }
