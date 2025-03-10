@@ -14,17 +14,17 @@ namespace MovieTicketBooking.Models
         [Required]
         public int MovieId { get; set; }
         [ForeignKey("MovieId")]
-        public Movie Movie { get; set; }
+        public Movie? Movie { get; set; }
         [Required]
         public int TheaterId { get; set; }
         [ForeignKey("TheaterId")]
-        public Theater Theater { get; set; }
+        public Theater? Theater { get; set; }
         public DateTime StartTime { get; set; }
         public decimal Price { get; set; }
 
         // Quan hệ 1 - n với Seat
-        public List<Seat> Seats { get; set; }
+        public List<Seat>? Seats { get; set; }
         // Quan hệ 1 - n với Booking
-        public List<Booking> Bookings { get; set; }
+        public List<Booking>? Bookings { get; set; }
     }
 }

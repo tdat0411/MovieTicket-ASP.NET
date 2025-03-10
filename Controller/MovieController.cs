@@ -53,7 +53,7 @@ namespace MovieTicketBooking.Controller
 
         // Cập nhật phim
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMovie(int id, [FromBody] Movie movie)
+        public async Task<IActionResult> UpdateMovie(int id, Movie movie)
         {
             if (id != movie.Id)
             {
@@ -61,7 +61,13 @@ namespace MovieTicketBooking.Controller
             }
 
             var updateMovie = await _movieRepo.UpdateMovie(movie);
-            return Ok(updateMovie);
+
+            if (!updateMovie)
+            {
+                return NotFound(new { message = "Movie not found!" });
+            }
+
+            return NoContent();
         }
 
         // Xóa phim
@@ -74,6 +80,32 @@ namespace MovieTicketBooking.Controller
                 return NotFound(new { message = "Movie not found!" });
             }
             return Ok(new { message = "Movie deleted successfully" });
+        }
+
+        // Tìm kiếm phim
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Movie>>> SearchMovies([FromQuery] string querry)
+        {
+            if (string.IsNullOrEmpty(querry))
+            {
+                return BadRequest(new { message = "Query cannot be empty!" });
+            }
+
+            var movies = await _movieRepo.SearchMovies(querry);
+            return Ok(movies);
+        }
+
+        // Phân trang
+        [HttpGet("paged")]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetPagedMovies([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+        {
+            if (page < 1 || pageSize < 1)
+            {
+                return BadRequest(new { message = "Page and pageSize must be greater than 0!" });
+            }
+
+            var movies = await _movieRepo.GetPagedMovies(page, pageSize);
+            return Ok(movies);
         }
     }
 }

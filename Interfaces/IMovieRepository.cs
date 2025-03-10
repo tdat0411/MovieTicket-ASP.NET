@@ -11,7 +11,9 @@ namespace MovieTicketBooking.Interfaces
         Task<IEnumerable<Movie>> GetAllMovies();
         Task<Movie> GetMovieById(int id);
         Task<Movie> AddMovie(Movie movie);
-        Task<Movie> UpdateMovie(Movie movie);
+        Task<bool> UpdateMovie(Movie movie);
         Task<bool> DeleteMovie(int id);
+        Task<IEnumerable<Movie>> SearchMovies(string querry);
+        Task<IEnumerable<Movie>> GetPagedMovies(int page, int pageSize);
     }
 }
