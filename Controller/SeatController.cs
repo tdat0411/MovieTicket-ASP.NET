@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.Interfaces;
+using MovieTicketBooking.Models;
 using MovieTicketBooking.Models.DTOs;
 
 namespace MovieTicketBooking.Controller
@@ -20,6 +21,27 @@ namespace MovieTicketBooking.Controller
         {
             _seatRepo = seatRepo;
             _mapper = mapper;
+        }
+
+        // Lấy danh sách ghế theo ShowtimeId
+        [HttpGet("showtime/{showtimeId}")]
+        public async Task<ActionResult<IEnumerable<Seat>>> GetSeatsByShowtime(int showtimeId)
+        {
+            var seats = await _seatRepo.GetSeatByShowtime(showtimeId);
+            return Ok(seats);
+        }
+
+        // Thêm ghế mới
+        [HttpPost]
+        public async Task<ActionResult<Seat>> AddSeat([FromBody] Seat seat)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var newSeat = await _seatRepo.AddSeat(seat);
+            return CreatedAtAction(nameof(GetSeatsByShowtime), new { showtimeId = newSeat.ShowtimeId }, newSeat);
         }
 
         // Lấy danh sách ghế trống theo suất chiếu

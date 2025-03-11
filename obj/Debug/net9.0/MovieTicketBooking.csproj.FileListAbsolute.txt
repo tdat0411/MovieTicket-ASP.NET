@@ -157,3 +157,7 @@ D:\dotNet Web Core\MovieTicket\MovieTicketBooking\obj\Debug\net9.0\MovieTicketBo
 D:\dotNet Web Core\MovieTicket\MovieTicketBooking\obj\Debug\net9.0\ref\MovieTicketBooking.dll
 D:\dotNet Web Core\MovieTicket\MovieTicketBooking\bin\Debug\net9.0\AutoMapper.dll
 D:\dotNet Web Core\MovieTicket\MovieTicketBooking\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\dotNet Web Core\MovieTicket\MovieTicketBooking\bin\Debug\net9.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\dotNet Web Core\MovieTicket\MovieTicketBooking\bin\Debug\net9.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\dotNet Web Core\MovieTicket\MovieTicketBooking\bin\Debug\net9.0\Newtonsoft.Json.dll
+D:\dotNet Web Core\MovieTicket\MovieTicketBooking\bin\Debug\net9.0\Newtonsoft.Json.Bson.dll

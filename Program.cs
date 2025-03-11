@@ -22,9 +22,16 @@ builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<ITheaterRepository, TheaterRepository>();
 builder.Services.AddScoped<IShowtimeRepository, ShowtimeRepository>();
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// JSON
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 
 var app = builder.Build();
 

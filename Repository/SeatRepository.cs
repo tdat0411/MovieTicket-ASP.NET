@@ -16,10 +16,27 @@ namespace MovieTicketBooking.Repository
         {
             _context = context;
         }
+
+        public async Task<Seat> AddSeat(Seat seat)
+        {
+            _context.Seats.Add(seat);
+            await _context.SaveChangesAsync();
+            return seat;
+        }
+
         public async Task<IEnumerable<Seat>> GetAvailableSeatsByShowtime(int showtimeId)
         {
             return await _context.Seats
             .Where(s => s.ShowtimeId == showtimeId && s.Status == "Available")
+            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Seat>> GetSeatByShowtime(int showtimeId)
+        {
+            return await _context.Seats
+            .Include(s => s.Showtime)
+            .Include(s => s.Booking)
+            .Where(s => s.ShowtimeId == showtimeId)
             .ToListAsync();
         }
     }

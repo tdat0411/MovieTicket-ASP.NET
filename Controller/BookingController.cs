@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieTicketBooking.Data;
+using MovieTicketBooking.Interfaces;
 using MovieTicketBooking.Models;
 
 namespace MovieTicketBooking.Controller
@@ -13,48 +14,45 @@ namespace MovieTicketBooking.Controller
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IBookingRepository _bookRepo;
 
-        public BookingController(AppDbContext context)
+        public BookingController(IBookingRepository bookRepo)
         {
-            _context = context;
+            _bookRepo = bookRepo;
         }
 
         // API đặt vé
         [HttpPost("book")]
         public async Task<IActionResult> BookTicket([FromBody] Booking booking)
         {
-            var showtime = await _context.Showtimes.FindAsync(booking.ShowtimeId);
-            if (showtime == null)
+            try
             {
-                return NotFound("Suất chiếu không tồn tại");
+                var newBooking = await _bookRepo.CreateBooking(booking);
+                return Ok(new { message = "Booking successful", booking = newBooking });
             }
-            var seat = await _context.Seats.FindAsync(booking.SeatId);
-            if (seat == null || seat.Status == "Booked")
+            catch (Exception ex)
             {
-                return BadRequest("Ghế không hợp lệ hoặc đã được đặt");
+                return BadRequest(new { message = ex.Message });
             }
-
-            // Đánh dấu ghế đã đặt
-            seat.Status = "Booked";
-            // Lưu booking vào db
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Đặt vé thành công!", booking });
         }
 
-        // API Xem danh sách Booking của User
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetBookingsByUser(int userId)
+        // API LẤY DANH SÁCH VÉ ĐÃ ĐẶT
+        [HttpGet("all")]
+        public async Task<IActionResult> GetBookings()
         {
-            var bookings = await _context.Bookings
-            .Where(b => b.UserId == userId)
-            .Include(b => b.Showtime)
-            .Include(b => b.Seat)
-            .ToListAsync();
-
+            var bookings = await _bookRepo.GetAllBooking();
             return Ok(bookings);
+        }
+
+        // API LẤY THÔNG TIN VÉ THEO ID
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookingById(int id)
+        {
+            var booking = await _bookRepo.GetBookingById(id);
+            if (booking == null)
+                return NotFound("Booking not found");
+
+            return Ok(booking);
         }
     }
 }
